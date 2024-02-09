@@ -8,7 +8,7 @@ Installing Tidal Connect on piCorePlayer can significantly increase the size of 
 ------------
 Install Tidal Connect.
 > 
-> wget -O - https://raw.githubusercontent.com/lovehifi/tidalconnect-picore/main/install.sh | sh
+> wget -O - https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/main/install.sh | sh
 >
 ----------------
 After installation, you need to perform the following steps:
