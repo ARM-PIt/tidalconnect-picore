@@ -21,6 +21,7 @@ wget -O /mnt/$TARGET/optional/ifiLib3.tcz https://raw.githubusercontent.com/ARM-
 wget -O /mnt/$TARGET/optional/ifiLib4.tcz https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/main/lib/ifiLib4.tcz
 
 echo "Deploy Tidal Connect and libraries"
+chmod 0755 /home/tc/Tidal-Connect-Armv7/tidal.sh
 tar -xvf /home/tc/tidal_connect_bin.tar.gz -C /home/tc/Tidal-Connect-Armv7/
 rm /home/tc/tidal_connect_bin.tar.gz
 
