@@ -36,4 +36,9 @@ sed '/\#pCPstart/ i\ldconfig\n\/usr\/local\/etc\/init.d\/avahi\ start' -i /opt/b
 echo "Save changes"
 pcp bu
 
-echo "Done"
+echo "Installation complete.
+To complete the setup add the following command to Tweaks > User commands in the pCP web interface and reboot:
+
+/home/tc/Tidal-Connect-Armv7/tidal.sh start
+
+The default configuration covers onboard sound, check the readme for instructions on using other devices."
