@@ -1,7 +1,7 @@
 # Tidal Connect for PiCorePlayer
 
 ### About this fork
-The original project was unusable as-is for setups with sound devices other than the rpi onboard sound, and the certificates did not work with the latest Android client at the time of this writing.  In addition to this, unnecessary items were removed, and the install script was simplified a bit, and everything but the bin directory were pulled for the tar archive for better visibility.
+The original project was unusable as-is for setups with sound devices other than the rpi onboard sound, and the certificates did not work with the latest Android client at the time of this writing.  In addition to this, unnecessary items were removed, the install script was simplified a bit, and everything but the bin directory was pulled from the tar archive for better visibility.
 
 ### Installation
 The only requirement outside of a base install of piCorePlayer is to expand the SD card partition, otherwise storage space will run out during installation.  Many users already set up their piCorePlayers to use the entire SD card, but in case not, use the Resize FS option on the main page of the web interface and give it at least the smallest option available.
@@ -67,7 +67,9 @@ There is probably a better approach to this.  Under normal Linux distributions t
 ### Sources from original project
 
 https://github.com/GioF71/tidal-connect
+
 https://github.com/TonyTromp/tidal-connect-docker
+
 https://github.com/vcucek/ifi-tidal-moode
 
 ### Updated certificates
