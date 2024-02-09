@@ -5,34 +5,34 @@
 
 useBusybox
 TARGET=`cat /etc/sysconfig/backup_device`
-#tce-load -i ca-certificates.tcz
-tce-load -wi avahi.tcz libavahi.tcz ipv6-netfilter-5.15.35-pcpCore-v7.tcz
-cd ~
-wget https://raw.githubusercontent.com/lovehifi/tidalconnect-picore/main/Tidal-Connect-Armv7.tar.gz
-tar -xzvf Tidal-Connect-Armv7.tar.gz --overwrite -C /
-cd /tmp
-wget https://raw.githubusercontent.com/lovehifi/tidalconnect-picore/main/ipv6-netfilter-5.15.35-pcpCore-v7l.tcz
-cp -f /tmp/ipv6-netfilter-5.15.35-pcpCore-v7l.tcz /mnt/mmcblk0p2/tce/optional/
 
-cd /mnt/$TARGET/optional
-echo "Download"
-wget https://raw.githubusercontent.com/lovehifi/pacman-smpd_1.x/main/ifiLib1.tcz
-wget https://raw.githubusercontent.com/lovehifi/pacman-smpd_1.x/main/ifiLib2.tcz
-wget https://raw.githubusercontent.com/lovehifi/pacman-smpd_1.x/main/ifiLib3.tcz
-wget https://raw.githubusercontent.com/lovehifi/pacman-smpd_1.x/main/ifiLib4.tcz
+echo "Load required pCP extensions"
+tce-load -wi avahi.tcz libavahi.tcz ipv6-netfilter-5.15.35-pcpCore-v7l.tcz
+
+echo "Download Tidal Connect and libraries"
+mkdir -p /home/tc/Tidal-Connect-Armv7/id_certificate
+wget -O /home/tc/Tidal-Connect-Armv7/tidal.sh https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/main/tidal.sh
+wget -O /home/tc/tidal_connect_bin.tar.gz https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/main/tidal_connect_bin.tar.gz
+wget -O /home/tc/Tidal-Connect-Armv7/id_certificate/IfiAudio_NeoStream.dat https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/certificates/main/IfiAudio_NeoStream.dat
+wget -O /home/tc/Tidal-Connect-Armv7/id_certificate/IfiAudio_ZenStream.dat https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/certificates/main/IfiAudio_ZenStream.dat
+wget -O /mnt/$TARGET/optional/ifiLib1.tcz https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/lib/main/ifiLib1.tcz
+wget -O /mnt/$TARGET/optional/ifiLib2.tcz https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/lib/main/ifiLib2.tcz
+wget -O /mnt/$TARGET/optional/ifiLib3.tcz https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/lib/main/ifiLib3.tcz
+wget -O /mnt/$TARGET/optional/ifiLib4.tcz https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/lib/main/ifiLib4.tcz
+
+echo "Deploy Tidal Connect and libraries"
+tar -xvf /home/tc/tidal_connect_bin.tar.gz -C /home/tc/Tidal-Connect-Armv7/
+rm /home/tc/Tidal-Connect-Armv7.tar.gz
 
 echo "ifiLib1.tcz" >> /mnt/mmcblk0p2/tce/onboot.lst
 echo "ifiLib2.tcz" >> /mnt/mmcblk0p2/tce/onboot.lst
 echo "ifiLib3.tcz" >> /mnt/mmcblk0p2/tce/onboot.lst
 echo "ifiLib4.tcz" >> /mnt/mmcblk0p2/tce/onboot.lst
 
-rm /home/tc/Tidal-Connect-Armv7.tar.gz
-sed -i '/ldconfig/d' /opt/bootlocal.sh
-echo ldconfig >>/opt/bootlocal.sh
-echo "Done!."
-#sleep 3
+echo "Add ldconfig and avahi start to startup"
+sed '/\#pCPstart/ i\ldconfig\n\/usr\/local\/etc\/init.d\/avahi\ start' -i /opt/bootlocal.sh
 
-# wget -O - https://raw.githubusercontent.com/lovehifi/tidalconnect-picore/main/install.sh | sh
-#pcp br
+echo "Save changes"
+pcp bu
 
-
+echo "Done"
