@@ -1,10 +1,10 @@
 # Tidal Connect for PiCorePlayer
 
 ### About this fork
-The original project was unusable as-is for setups with sound devices other than the rpi onboard sound, and the certificates did not work with the latest Android client at the time of this writing.  In addition to this, unnecessary items were removed, the install script was simplified a bit, and everything but the bin directory was pulled from the tar archive for better visibility.
+The original project was unusable as-is for setups with sound devices other than the onboard sound card, and the certificates did not work with the latest Android client at the time of this writing.  In addition to this, unnecessary items were removed, the install script was simplified a bit, and everything but the bin directory was pulled from the tar archive for better visibility.
 
 ### Installation
-The only requirement outside of a base install of piCorePlayer is to expand the SD card partition, otherwise storage space will run out during installation.  Many users already set up their piCorePlayers to use the entire SD card, but in case not, use the Resize FS option on the main page of the web interface and give it at least the smallest option available.
+The only requirement outside of a base install of piCorePlayer (32 bit) is to expand the SD card partition, otherwise storage space will run out during installation.  Many users already set up their piCorePlayers to use the entire SD card, but in case not, use the Resize FS option on the main page of the web interface and give it at least the smallest option available.
 ```
 wget -O - https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/main/install.sh | sh
 ```
@@ -30,7 +30,7 @@ Could not find device: 'foo'. Fallback to default device
 Valid devices are: 'bcm2835 Headphones: - (hw:0,0)' 'iFi (by AMR) HD USB Audio: - (hw:1,0)' 'sysdefault' 'pcpinput' 'sound_device' 'dmix' 'default'
 ```
 
-In this example we will use the USB DAC as our output device.  Edit /home/tc/Tidal-Connect-Armv7/tidal.sh by changing the playback device flag, matching it to the label from the output in the last command, BUT set the index to hw:0,0.  While this does need to match the script output, verbatim, this change is explained in the next steps:
+In this example we will use the USB DAC as our output device.  Edit /home/tc/Tidal-Connect-Armv7/tidal.sh by changing the playback device flag, matching it to the label from the output in the last command, **BUT set the index to hw:0,0.  Normally, this needs to match an item in the script output;** however, this change is explained in the next steps:
 
 ```
 ...
@@ -47,10 +47,10 @@ pcp bu
 ```
 Because the index number can (and will) change through reboots, having only one sound device at a time ensures the device stays at hw:0,0 and the tidal_connect device label does not change.  Disable the onboard sound to achieve this.
 
-Mount the boot partition:
+Mount the boot partition and open config.txt for editing:
 ```
 mount /mnt/mmcblk0p1
-vi mount /mnt/mmcblk0p1/config.txt
+vi /mnt/mmcblk0p1/config.txt
 ```
 
 Make sure the following lines are commented:
@@ -61,8 +61,6 @@ Make sure the following lines are commented:
 ```
 
 Reboot and try it out.
-
-There is probably a better approach to this.  Under normal Linux distributions the index can be set using modprobe; however, I could not get this to work by adding and saving the appropriate file with parameters to /etc/modprobe.d.  Some more investigation is needed here.
 
 ### Sources from original project
 
@@ -75,3 +73,9 @@ https://github.com/vcucek/ifi-tidal-moode
 ### Updated certificates
 
 https://github.com/TonyTromp/tidal-connect-docker/tree/bug/issue-28_tidal-apk-TLS-handshake/Docker/src/id_certificate
+
+### Other notes
+
+All testing was done on a Raspberry Pi 4.  While testing I realized that I completely missed the step for enabling shairplay-sync from the original project.  I don't know if it's fair to say shairplay is completely unnecessary, but going from flashing a blank SD card with piCorePlayer, to expanding the filesystem, to running the install script, playback worked fine.
+
+Regarding using only one sound device at a time, there is probably a better approach to this.  Under normal Linux distributions the index can be set using modprobe; however, I could not get this to work by adding and saving the appropriate file with parameters to /etc/modprobe.d.  Some more investigation is needed here.
