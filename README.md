@@ -15,10 +15,13 @@ Next, the Tidal connect script will need to be set to startup automatically.  In
 /home/tc/Tidal-Connect-Armv7/tidal.sh start
 ```
 
-Note: The setup differs from the original project here in two ways, 1) avahi was configured to start up using /opt/bootlocal.sh, and 2) the default playback device in tidal.sh is set to 'sound_device' since this makes tidal_connect output to 3.5mm jack  
+Note: The setup differs from the original project here in two ways, 1) avahi was configured to start up using /opt/bootlocal.sh, and 2) the default playback device in tidal.sh is set to 'sound_device' since this makes tidal_connect output to the onboard 3.5mm jack  
+
+For a Raspberry Pi 4 using only onboard audio, that's it, reboot, connect with a Tidal client and play.  If you'd like to change the advertised name of the player, change the TC_NAME variable in /home/tc/Tidal-Connect-Armv7/tidal.sh, save with 'pcp bu', reboot.
 
 ### Configuring for other output devices
 If you wish to output sound to another device on the system, you need to check how tidal_connect identifies the devices.  SSH to the piCorePlayer and execute the following:
+
 ```
 /home/tc/Tidal-Connect-Armv7/bin/tidal_connect --playback-device foo | grep devices
 ```
@@ -30,13 +33,13 @@ Could not find device: 'foo'. Fallback to default device
 Valid devices are: 'bcm2835 Headphones: - (hw:0,0)' 'iFi (by AMR) HD USB Audio: - (hw:1,0)' 'sysdefault' 'pcpinput' 'sound_device' 'dmix' 'default'
 ```
 
-In this example we will use the USB DAC as our output device.  Edit /home/tc/Tidal-Connect-Armv7/tidal.sh by changing the playback device flag, matching it to the label from the output in the last command, **BUT set the index to hw:0,0.  Normally, this needs to match an item in the script output;** however, this change is explained in the next steps:
+In this example we will use the USB DAC as our output device.  Edit /home/tc/Tidal-Connect-Armv7/tidal.sh by changing the TC_DEVICE variable, matching it to the label from the output in the last command, **BUT set the index to hw:0,0.**  While this needs to match an item in the script output, verbatim, in the following steps we will make sure the USB DAC is always assigned hw:0,0 by disabling the onboard sound:
 
 ```
-...
-   --enable-mqa-passthrough true \
-   --playback-device "iFi (by AMR) HD USB Audio: - (hw:0,0)" \
-   --log-level 0 \
+#!/bin/sh
+
+TC_DEVICE="iFi (by AMR) HD USB Audio: - (hw:0,0)"
+TC_NAME="piCore8"
 ...
 ```
 
@@ -45,15 +48,16 @@ Save the change
 ```
 pcp bu
 ```
-Because the index number can (and will) change through reboots, having only one sound device at a time ensures the device stays at hw:0,0 and the tidal_connect device label does not change.  Disable the onboard sound to achieve this.
 
-Mount the boot partition and open config.txt for editing:
+Because the index number can (and will) change through reboots, having only one sound device at a time ensures the device stays at hw:0,0 and the tidal_connect device label does not change.  Disable the onboard sound by modifying config.txt as follows:
+
 ```
 mount /mnt/mmcblk0p1
 vi /mnt/mmcblk0p1/config.txt
 ```
 
 Make sure the following lines are commented:
+
 ```
 # onboard audio overlay
 #dtparam=audio=on

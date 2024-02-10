@@ -1,5 +1,8 @@
 #!/bin/sh
 
+TC_DEVICE="sound_device"
+TC_NAME="piCore8"
+
 export LD_LIBRARY_PATH=/usr/ifi/ifi-tidal/Tidal-Connect-Armv7/lib
 
 PIDFILE=/var/run/tc8.pid
@@ -11,14 +14,14 @@ start_tc() {
 echo "Starting Tidal Connect.."
 /home/tc/Tidal-Connect-Armv7/bin/tidal_connect \
    --tc-certificate-path "/home/tc/Tidal-Connect-Armv7/id_certificate/IfiAudio_ZenStream.dat" \
-   -f "piCore8 Pi4" \
+   -f "${TC_NAME}" \
    --codec-mpegh false \
    --codec-mqa true \
    --model-name "Tidal" \
    --disable-app-security false \
    --disable-web-security false \
    --enable-mqa-passthrough true \
-   --playback-device "sound_device" \
+   --playback-device "${TC_DEVICE}" \
    --log-level 0 \
    --enable-websocket-log "0" \
 
