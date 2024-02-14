@@ -74,6 +74,12 @@ https://github.com/TonyTromp/tidal-connect-docker
 
 https://github.com/vcucek/ifi-tidal-moode
 
+### Related history
+
+https://github.com/shawaj/HiTide
+
+https://forums.raspberrypi.com/viewtopic.php?t=297771
+
 ### Updated certificates
 
 https://github.com/TonyTromp/tidal-connect-docker/tree/bug/issue-28_tidal-apk-TLS-handshake/Docker/src/id_certificate
@@ -87,3 +93,5 @@ Regarding using only one sound device at a time, there is probably a better appr
 Flipping between LMS playback and Tidal Connect might be problematic.  I've noticed it get stuck on LMS occasionally, but have also had plenty of successful switches back and forth.  The behavior seems to be that when LMS is in use, tidal_connect finds no devices, but when LMS playback is paused and 5-10 seconds pass the sound device becomes available to tidal_connect again.  It's handy to remember that when a client connects successfully and says it's playing, but no sound is produced, this is likely the culprit as the tidal_connect app will happily pipe the signal into the void.
 
 While figuring out the certificate issue with the Android client I found numerous reports concerning the certificate being invalid.  I'm not sure if it is expiration or revocation, but this is another item for the shortlist of things to check out if tidal_connect stops working.  The main angle for troubleshooting this and other issues with the app is to SSH to the piCorePlayer, stop tidal_connect, and then run the start command for tidal_connect on the command prompt.  This will give some useful output as to what's going on when clients connect, or attempt to and fail.  In the case of the failing Android client a tls handshake failure message was shown, leading to the solution.
+
+The tidal_connect app should work with Raspberry Pi 3 and zero variants; however, it has been reported that this fork only works on Pi 4.  I only have Pi 4 boards at my disposal, so for now I am unable to explore this further.  I noticed that other projects using tidal_connect install 'multiarch-support' from the Debian repositories, so this may be a clue as to what is missing.  I have not noticed an equivalent to 'multiarch-support' under the piCorePlayer extensions lists.  It may also be that something I removed from the original tar.gz was providing the compatibility to the other boards; but, again, I can't test this at the moment so I'm leaving the project as it is.
