@@ -33,12 +33,13 @@ echo "ifiLib4.tcz" >> /mnt/mmcblk0p2/tce/onboot.lst
 echo "Add ldconfig and avahi start to startup"
 sed '/\#pCPstart/ i\ldconfig\n\/usr\/local\/etc\/init.d\/avahi\ start' -i /opt/bootlocal.sh
 
-echo "Save changes"
-pcp bu
-
-echo "Installation complete.
+echo "Installation complete.  RESTART IS REQUIRED.  SAVING CHANGES AND REBOOTING IN 30 SECONDS.
 To complete the setup add the following command to Tweaks > User commands in the pCP web interface and reboot:
 
 /home/tc/Tidal-Connect-Armv7/tidal.sh start
 
 The default configuration covers onboard sound, check the readme for instructions on using other devices."
+
+sleep 30
+
+pcp br

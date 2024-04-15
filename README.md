@@ -3,8 +3,14 @@
 ### About this fork
 The original project was unusable as-is for setups with sound devices other than the onboard sound card, and the certificates did not work with the latest Android client at the time of this writing.  In addition to this, unnecessary items were removed, the install script was simplified a bit, and everything but the bin directory was pulled from the tar archive for better visibility.
 
+### Requirements
+* Pi 4 Model B
+* piCorePlayer 9.0.0 32-bit
+* 200MB available on the SD card
+
 ### Installation
-The only requirement outside of a base install of piCorePlayer (32 bit) is to expand the SD card partition, otherwise storage space will run out during installation.  Many users already set up their piCorePlayers to use the entire SD card, but in case not, use the Resize FS option on the main page of the web interface and give it at least the smallest option available.
+The bulk of the installation is handled by the install script.  With pCP 9 a reboot is required for the tidal_connect binary to run properly, so the install script will give a 30 second warning once it is done, and then do a backup and restart.
+
 ```
 wget -O - https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/main/install.sh | sh
 ```
@@ -15,7 +21,11 @@ Next, the Tidal connect script will need to be set to startup automatically.  In
 /home/tc/Tidal-Connect-Armv7/tidal.sh start
 ```
 
-Note: The setup differs from the original project here in two ways, 1) avahi was configured to start up using /opt/bootlocal.sh, and 2) the default playback device in tidal.sh is set to 'sound_device' since this makes tidal_connect output to the onboard 3.5mm jack  
+If you want to use this with Apple devices you can enable shairplay by going to Tweaks > Audio tweaks > Shairport-sync, and marking it "Yes".
+
+Finally, you must make sure Squeezelite is set to close the audio device when it is not using it so that tidal_connect may then use it.  From the web interface go to Squeezelite Settings > Change Squeezelite settings > Close output setting, and give a reasonable number of seconds for the audio device to be closed.  Two seconds have worked fine in my usage.  The typical scenario here is LMS has been playing music, but you want to switch to Tidal Connect; so you pause LMS playback, the amount of time defined here passes, then Tidal Connect can be used.  The default setting with piCorePlayer 9 is to never close the device, so the tidal.sh run script will not work if you do not set this.
+
+Note: The setup differs from the original project here in two ways, 1) avahi was configured to start up using /opt/bootlocal.sh, and 2) the default playback device in tidal.sh is set to 'sound_device' since this makes tidal_connect output to the onboard 3.5mm jack.  Also note that a 10 second sleep has been added to the tidal.sh script so that it has the best chance of starting up after a reboot, giving some time for Squeezelite to release the audio device.
 
 For a Raspberry Pi 4 using only onboard audio, that's it, reboot, connect with a Tidal client and play.  If you'd like to change the advertised name of the player, change the TC_NAME variable in /home/tc/Tidal-Connect-Armv7/tidal.sh, save with 'pcp bu', reboot.
 
@@ -56,7 +66,7 @@ mount /mnt/mmcblk0p1
 vi /mnt/mmcblk0p1/config.txt
 ```
 
-Make sure the following lines are commented:
+Make sure the following lines are commented (as of pCP 9 the only the dtparam=audio=on parameter is present):
 
 ```
 # onboard audio overlay
@@ -86,7 +96,7 @@ https://github.com/TonyTromp/tidal-connect-docker/tree/bug/issue-28_tidal-apk-TL
 
 ### Other notes
 
-All testing was done on a Raspberry Pi 4, a Windows 10 Tidal client (2.36.2.54-release), and an Android 10 Tidal client (2.100.0).  While testing I realized that I completely missed the step for enabling shairplay-sync from the original project.  I don't know if it's fair to say shairplay is completely unnecessary, but going from flashing a blank SD card with piCorePlayer, to expanding the filesystem, to running the install script, playback worked fine.  The piCorePlayer web interfaces says it is for iDevices, so this may be required for Apple devices.
+All testing was done on a Raspberry Pi 4 Model B, a Windows 10 Tidal client (2.36.2.54-release), and an Android 10 Tidal client (2.100.0).  Going from flashing a blank SD card with piCorePlayer 9.0.0 32-bit, to expanding the filesystem, to running the install script and adding tidal.sh and rebooting, playback via Android worked as expected.
 
 Regarding using only one sound device at a time, there is probably a better approach to this.  Under normal Linux distributions the index can be set using modprobe; however, I could not get this to work by adding and saving the appropriate file with parameters to /etc/modprobe.d.  Some more investigation is needed here.
 

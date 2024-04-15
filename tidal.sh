@@ -11,7 +11,7 @@ DAEMON=/home/tc/Tidal-Connect-Armv7/bin/tidal_connect
 USER=tc
 
 start_tc() {
-echo "Starting Tidal Connect.."
+sleep 10 && echo "Starting Tidal Connect.."
 /home/tc/Tidal-Connect-Armv7/bin/tidal_connect \
    --tc-certificate-path "/home/tc/Tidal-Connect-Armv7/id_certificate/IfiAudio_ZenStream.dat" \
    -f "${TC_NAME}" \
