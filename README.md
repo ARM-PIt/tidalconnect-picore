@@ -9,7 +9,7 @@ The original project was unusable as-is for setups with sound devices other than
 * 200MB available on the SD card
 
 ### Installation
-The bulk of the installation is handled by the install script.  With pCP 9 a reboot is required for the tidal_connect binary to run properly, so the install script will give a 30 second warning once it is done, and then do a backup and restart.
+The bulk of the installation is handled by the install script.  With piCorePlayer 9 a reboot is required for the tidal_connect binary to run properly, so the install script will give a 30 second warning once it is done, and then do a backup and reboot.
 
 ```
 wget -O - https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/main/install.sh | sh
@@ -27,7 +27,7 @@ Finally, you must make sure Squeezelite is set to close the audio device when it
 
 Note: The setup differs from the original project here in two ways, 1) avahi was configured to start up using /opt/bootlocal.sh, and 2) the default playback device in tidal.sh is set to 'sound_device' since this makes tidal_connect output to the onboard 3.5mm jack.  Also note that a 10 second sleep has been added to the tidal.sh script so that it has the best chance of starting up after a reboot, giving some time for Squeezelite to release the audio device.
 
-For a Raspberry Pi 4 using only onboard audio, that's it, reboot, connect with a Tidal client and play.  If you'd like to change the advertised name of the player, change the TC_NAME variable in /home/tc/Tidal-Connect-Armv7/tidal.sh, save with 'pcp bu', reboot.
+For a Raspberry Pi 4 using only onboard audio, that's it, reboot, connect with a Tidal client and play.  If you'd like to change the advertised name of the player, change the TC_NAME variable in /home/tc/Tidal-Connect-Armv7/tidal.sh, save and reboot with 'pcp br'.
 
 ### Configuring for other output devices
 If you wish to output sound to another device on the system, you need to check how tidal_connect identifies the devices.  SSH to the piCorePlayer and execute the following:
@@ -66,7 +66,7 @@ mount /mnt/mmcblk0p1
 vi /mnt/mmcblk0p1/config.txt
 ```
 
-Make sure the following lines are commented (as of pCP 9 the only the dtparam=audio=on parameter is present):
+Make sure the following lines are commented (as of piCorePlayer 9 only the dtparam=audio=on parameter is present):
 
 ```
 # onboard audio overlay
@@ -96,11 +96,11 @@ https://github.com/TonyTromp/tidal-connect-docker/tree/bug/issue-28_tidal-apk-TL
 
 ### Other notes
 
-All testing was done on a Raspberry Pi 4 Model B, a Windows 10 Tidal client (2.36.2.54-release), and an Android 10 Tidal client (2.100.0).  Going from flashing a blank SD card with piCorePlayer 9.0.0 32-bit, to expanding the filesystem, to running the install script and adding tidal.sh and rebooting, playback via Android worked as expected.
+All testing was done on a Raspberry Pi 4 Model B, a Windows 10 Tidal client (2.36.2.54-release), and an Android 10 Tidal client (2.100.0).  Going from flashing a blank SD card with piCorePlayer 9.0.0 32-bit, to expanding the filesystem, to running the install script and adding tidal.sh to startup and rebooting, playback via Android worked as expected.
 
 Regarding using only one sound device at a time, there is probably a better approach to this.  Under normal Linux distributions the index can be set using modprobe; however, I could not get this to work by adding and saving the appropriate file with parameters to /etc/modprobe.d.  Some more investigation is needed here.
 
-Flipping between LMS playback and Tidal Connect might be problematic.  I've noticed it get stuck on LMS occasionally, but have also had plenty of successful switches back and forth.  The behavior seems to be that when LMS is in use, tidal_connect finds no devices, but when LMS playback is paused and 5-10 seconds pass the sound device becomes available to tidal_connect again.  It's handy to remember that when a client connects successfully and says it's playing, but no sound is produced, this is likely the culprit as the tidal_connect app will happily pipe the signal into the void.
+Flipping between LMS playback and Tidal Connect might be problematic.  I've noticed it get stuck on LMS occasionally, but have also had plenty of successful switches back and forth.  I may have missed the close player parameter in pCP 8, but with pCP 9 the audio device hand-off behavior accurately reflects this parameter as far as I have tested.  It's handy to remember that when a client connects successfully and says it's playing, but no sound is produced, the likely culprit is that tidal_connect was not able to grab the audio device.
 
 While figuring out the certificate issue with the Android client I found numerous reports concerning the certificate being invalid.  I'm not sure if it is expiration or revocation, but this is another item for the shortlist of things to check out if tidal_connect stops working.  The main angle for troubleshooting this and other issues with the app is to SSH to the piCorePlayer, stop tidal_connect, and then run the start command for tidal_connect on the command prompt.  This will give some useful output as to what's going on when clients connect, or attempt to and fail.  In the case of the failing Android client a tls handshake failure message was shown, leading to the solution.
 
