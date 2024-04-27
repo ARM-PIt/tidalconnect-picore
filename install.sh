@@ -7,7 +7,7 @@ useBusybox
 TARGET=`cat /etc/sysconfig/backup_device`
 
 echo "Load required pCP extensions"
-tce-load -wi avahi.tcz libavahi.tcz ipv6-netfilter-5.15.35-pcpCore-v7l.tcz
+tce-load -wi avahi.tcz libavahi.tcz ipv6-netfilter-6.1.77-pcpCore-v7l.tcz
 
 echo "Download Tidal Connect and libraries"
 mkdir -p /home/tc/Tidal-Connect-Armv7/id_certificate
