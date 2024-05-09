@@ -33,6 +33,7 @@ The default playback device in tidal.sh is set to 'sound_device' since this make
 
 For a Raspberry Pi 4 using only onboard audio, that's it; run the install script, let it reboot, connect with a Tidal client and play.  If you'd like to change the advertised name of the player, change the TC_NAME variable in /home/tc/Tidal-Connect-Armv7/tidal.sh, save and reboot with 'pcp br'.
 
+### Known Issues
 There is a known issue regarding volume control with some HiFiBerry cards.  While playback does work, volume is at what I would assume is 100%, and there is no way of adjusting this.  I have also found this to be the case with some USB bluetooth transmitter dongles from Creative and 1Mii.  The issue is being tracked in the tidal-connect-docker project linked below.  There is a link to the issue in the project's readme. 
 
 ### Configuring for other output devices
