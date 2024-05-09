@@ -7,7 +7,7 @@ useBusybox
 TARGET=`cat /etc/sysconfig/backup_device`
 
 echo "Load required pCP extensions"
-tce-load -wi avahi.tcz libavahi.tcz ipv6-netfilter-6.1.77-pcpCore-v7l.tcz
+tce-load -wi openssl-1.1.1.tcz avahi.tcz libavahi.tcz ipv6-netfilter-6.1.77-pcpCore-v7l.tcz
 
 echo "Download Tidal Connect and libraries"
 mkdir -p /home/tc/Tidal-Connect-Armv7/id_certificate
@@ -30,15 +30,17 @@ echo "ifiLib2.tcz" >> /mnt/mmcblk0p2/tce/onboot.lst
 echo "ifiLib3.tcz" >> /mnt/mmcblk0p2/tce/onboot.lst
 echo "ifiLib4.tcz" >> /mnt/mmcblk0p2/tce/onboot.lst
 
-echo "Add ldconfig and avahi start to startup"
-sed '/\#pCPstart/ i\ldconfig\n\/usr\/local\/etc\/init.d\/avahi\ start' -i /opt/bootlocal.sh
+echo "Add ldconfig, avahi, and tidal.sh to startup"
+if ! grep -q "ldconfig" /opt/bootlocal.sh && \
+   ! grep -q "/usr/local/etc/init.d/avahi start" /opt/bootlocal.sh && \
+   ! grep -q "/home/tc/Tidal-Connect-Armv7/tidal.sh start" /opt/bootlocal.sh; then
+    sed '/\#pCPstart/ i\ldconfig\n\/usr\/local\/etc\/init.d\/avahi\ start\n\/home\/tc\/Tidal-Connect-Armv7\/tidal.sh\ start\ &' -i /opt/bootlocal.sh
+fi
 
-echo "Installation complete.  RESTART IS REQUIRED.  SAVING CHANGES AND REBOOTING IN 30 SECONDS.
-To complete the setup add the following command to Tweaks > User commands in the pCP web interface and reboot:
+echo "Add CLOSEOUT value so sound device is not permanently reserved by Squeezelite"
+sed -i 's/CLOSEOUT=""/CLOSEOUT="2"/' "/usr/local/etc/pcp/pcp.cfg"
 
-/home/tc/Tidal-Connect-Armv7/tidal.sh start
-
-The default configuration covers onboard sound, check the readme for instructions on using other devices."
+echo "Installation complete.  RESTART IS REQUIRED.  SAVING CHANGES AND REBOOTING IN 30 SECONDS."
 
 sleep 30
 

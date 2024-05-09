@@ -9,25 +9,29 @@ The original project was unusable as-is for setups with sound devices other than
 * 200MB available on the SD card
 
 ### Installation
-The bulk of the installation is handled by the install script.  With piCorePlayer 9 a reboot is required for the tidal_connect binary to run properly, so the install script will give a 30 second warning once it is done, and then do a backup and reboot.
+The bulk of the installation is handled by the install script.  A reboot is required for the tidal_connect binary to run properly, so the install script will give a 30 second warning once it is done, and then do a backup and reboot.
 
 ```
 wget -O - https://raw.githubusercontent.com/ARM-PIt/tidalconnect-picore/main/install.sh | sh
 ```
 
-Next, the Tidal connect script will need to be set to startup automatically.  In the web interface, go to Tweaks > User commands, and enter the following:
+The script adds the following commands to /opt/bootlocal.sh, which are ran at start up:
 
 ```
-/home/tc/Tidal-Connect-Armv7/tidal.sh start
+ldconfig
+/usr/local/etc/init.d/avahi start
+/home/tc/Tidal-Connect-Armv7/tidal.sh start &
 ```
+
+Previously this was handled by giving instructions to add the tidal.sh start command to Tweaks > User commands in the web interface; however, it is more straightforward to have all the start up commands in one place while leaving the User commands open to other commands users might have.
+
+The script also changes the CLOSEOUT parameter in /usr/local/etc/pcp/pcp.cfg to 2 if it is in the default state of having no value.  A value here is necessary, otherwise Squeezelite will never give up control of the sound device, preventing tidal_connect from running.  This setting can be controlled from the web interface at Squeezelite Settings > Change Squeezelite settings > Close output setting.
 
 If you want to use this with Apple devices you can enable shairplay by going to Tweaks > Audio tweaks > Shairport-sync, and marking it "Yes".
 
-Finally, you must make sure Squeezelite is set to close the audio device when it is not using it so that tidal_connect may then use it.  From the web interface go to Squeezelite Settings > Change Squeezelite settings > Close output setting, and give a reasonable number of seconds for the audio device to be closed.  Two seconds have worked fine in my usage.  The typical scenario here is LMS has been playing music, but you want to switch to Tidal Connect; so you pause LMS playback, the amount of time defined here passes, then Tidal Connect can be used.  The default setting with piCorePlayer 9 is to never close the device, so the tidal.sh run script will not work if you do not set this.
+The default playback device in tidal.sh is set to 'sound_device' since this makes tidal_connect output to the onboard 3.5mm jack.  Also note that a 10 second sleep has been added to the tidal.sh script so that it has the best chance of starting up after a reboot, giving some time for Squeezelite to release the audio device.
 
-Note: The setup differs from the original project here in two ways, 1) avahi was configured to start up using /opt/bootlocal.sh, and 2) the default playback device in tidal.sh is set to 'sound_device' since this makes tidal_connect output to the onboard 3.5mm jack.  Also note that a 10 second sleep has been added to the tidal.sh script so that it has the best chance of starting up after a reboot, giving some time for Squeezelite to release the audio device.
-
-For a Raspberry Pi 4 using only onboard audio, that's it, reboot, connect with a Tidal client and play.  If you'd like to change the advertised name of the player, change the TC_NAME variable in /home/tc/Tidal-Connect-Armv7/tidal.sh, save and reboot with 'pcp br'.
+For a Raspberry Pi 4 using only onboard audio, that's it; run the script, let it reboot, connect with a Tidal client and play.  If you'd like to change the advertised name of the player, change the TC_NAME variable in /home/tc/Tidal-Connect-Armv7/tidal.sh, save and reboot with 'pcp br'.
 
 ### Configuring for other output devices
 If you wish to output sound to another device on the system, you need to check how tidal_connect identifies the devices.  SSH to the piCorePlayer and execute the following:
@@ -49,7 +53,7 @@ In this example we will use the USB DAC as our output device.  Edit /home/tc/Tid
 #!/bin/sh
 
 TC_DEVICE="iFi (by AMR) HD USB Audio: - (hw:0,0)"
-TC_NAME="piCore8"
+TC_NAME="piCorePlayer9"
 ...
 ```
 
