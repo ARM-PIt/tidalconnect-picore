@@ -31,7 +31,9 @@ If you want to use this with Apple devices you can enable shairplay by going to 
 
 The default playback device in tidal.sh is set to 'sound_device' since this makes tidal_connect output to the onboard 3.5mm jack.  Also note that a 10 second sleep has been added to the tidal.sh script so that it has the best chance of starting up after a reboot, giving some time for Squeezelite to release the audio device.
 
-For a Raspberry Pi 4 using only onboard audio, that's it; run the script, let it reboot, connect with a Tidal client and play.  If you'd like to change the advertised name of the player, change the TC_NAME variable in /home/tc/Tidal-Connect-Armv7/tidal.sh, save and reboot with 'pcp br'.
+For a Raspberry Pi 4 using only onboard audio, that's it; run the install script, let it reboot, connect with a Tidal client and play.  If you'd like to change the advertised name of the player, change the TC_NAME variable in /home/tc/Tidal-Connect-Armv7/tidal.sh, save and reboot with 'pcp br'.
+
+There is a known issue regarding volume control with some HiFiBerry cards.  While playback does work, volume is at what I would assume is 100%, and there is no way of adjusting this.  I have also found this to be the case with some USB bluetooth transmitter dongles from Creative and 1Mii.  The issue is being tracked in the tidal-connect-docker project linked below.  There is a link to the issue in the project's readme. 
 
 ### Configuring for other output devices
 If you wish to output sound to another device on the system, you need to check how tidal_connect identifies the devices.  SSH to the piCorePlayer and execute the following:
